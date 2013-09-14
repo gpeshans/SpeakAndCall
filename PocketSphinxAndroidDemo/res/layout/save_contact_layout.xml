@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/SaveContactPhoneLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="@string/call_label"
+        android:textSize="25sp" />
+
+    <EditText
+        android:id="@+id/SaveContactEditTel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/SaveContactPhoneLabel"        
+        android:gravity="bottom|left|center_horizontal"
+        android:height="75dp"        
+        android:textSize="40sp"
+        android:text="@string/results_here" />
+    
+    <TextView
+        android:id="@+id/SaveContactNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_below="@id/SaveContactEditTel"
+        android:text="@string/contact_name"
+        android:textSize="25sp" />
+
+    <EditText
+        android:id="@+id/SaveContactEditName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/SaveContactNameLabel"        
+        android:gravity="bottom|left|center_horizontal"
+        android:height="75dp"        
+        android:textSize="40sp"
+        android:text="@string/results_here" />
+    
+    <Button
+        android:id="@+id/BtnPhoneUkras3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/SaveContactEditName"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/icon" />
+    
+    <TextView
+        android:id="@+id/SavePerformanceLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="130dp"
+        android:layout_below="@id/SaveContactEditName"
+        android:layout_centerHorizontal="true"
+        android:text="@string/performance_text" />
+
+</RelativeLayout>

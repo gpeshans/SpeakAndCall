@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/CallTitleLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_marginTop="50dp"      
+        android:textSize="25sp"            
+        android:text="@string/call_label" />
+    
+    <EditText
+        android:id="@+id/CallEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/CallTitleLabel"
+        android:layout_marginBottom="150dp"
+        android:gravity="bottom|left|center_horizontal"
+        android:height="100dp"
+        android:inputType="none"
+        android:text="@string/results_here"   
+        android:textSize="40sp" />
+    
+    <Button
+        android:id="@+id/BtnPhoneUkras"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/CallEdit"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/icon" />
+
+    <TextView
+        android:id="@+id/CallPerformanceLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="65dp"
+        android:layout_below="@id/BtnPhoneUkras"
+        android:layout_centerHorizontal="true"
+        android:text="@string/performance_text" />
+
+</RelativeLayout>

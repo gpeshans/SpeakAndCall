@@ -1,0 +1,36 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/PerformanceText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal|top"
+        android:text="@string/performance_text" >
+    </TextView>
+
+    <EditText
+        android:id="@+id/ResultEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/PerformanceText"      
+        android:gravity="bottom|right"
+        android:height="100dp"
+        android:layout_marginBottom="50dp"
+        android:inputType="none"
+        android:text="@string/results_here"
+        android:textSize="40sp" />
+
+    <Button
+        android:id="@+id/BtnSpeak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/ResultEdit"
+        android:background="@drawable/icon" >
+    </Button>
+
+</RelativeLayout>

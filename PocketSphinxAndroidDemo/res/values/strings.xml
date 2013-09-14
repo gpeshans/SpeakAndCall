@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <string name="hello">Hello World, PocketSphinxAndroidDemo!</string>
+    <string name="app_name">SpeakAndCall</string>
+
+    <color name="white">#FFF</color>
+
+    <string name="performance_text">0.00 seconds 0.00 xRT</string>
+    <string name="dummy_section_text">Section %1d is just a dummy section.</string>
+    <string name="demo_external_activity">Demo External Activity</string>
+    <string name="demo_collection">Demo Collection</string>
+    <string name="results_here"></string>
+    <string name="phone_label">Телефонирај</string>
+    <string name="save_contact_label">Зачувај број</string>   
+    <string name="call_label">Телефонски број:</string>    
+    <string name="contact_name">Име на контакт:</string>
+    <string name="search_label">Пребарај контакт</string>
+
+</resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="PocketSphinxAndroidDemo/libs/armeabi"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="src" path="jni"/>
+	<classpathentry kind="lib" path="D:/Goran/FEIT-FINKI/GraduationWork/PocketsphinxForAndroid/PocketSphinxAndroidDemo/libs/achartengine-1.0.0.jar"/>
+	<classpathentry kind="lib" path="D:/Goran/FEIT-FINKI/GraduationWork/PocketsphinxForAndroid/PocketSphinxAndroidDemo/libs/android-support-v4.jar"/>
+	<classpathentry kind="lib" path="D:/Goran/FEIT-FINKI/GraduationWork/PocketsphinxForAndroid/PocketSphinxAndroidDemo/libs/jsoup-1.7.2.jar"/>
+	<classpathentry kind="lib" path="D:/Goran/FEIT-FINKI/GraduationWork/PocketsphinxForAndroid/PocketSphinxAndroidDemo/libs/ksoap2-j2se-full-2.1.2.jar"/>
+	<classpathentry kind="lib" path="D:/Goran/FEIT-FINKI/GraduationWork/PocketsphinxForAndroid/PocketSphinxAndroidDemo/libs/poi-3.9-20121203.jar"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry kind="output" path="bin/classes"/>
+</classpath>

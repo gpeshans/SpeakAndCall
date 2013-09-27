@@ -1,7 +1,6 @@
 package mk.ukim.finki.peda.speakandcall.app;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -15,8 +14,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.ContactsContract;
@@ -71,6 +70,7 @@ public class SearchContactActivity extends Activity implements
 	Boolean names_flagSpeak;
 
 	MediaPlayer player;
+	MediaPlayer playerBeep;
 
 	/** Called when the activity is first created. */
 	public void onCreate(Bundle savedInstanceState) {
@@ -97,7 +97,7 @@ public class SearchContactActivity extends Activity implements
 
 		this.names_rec_thread.start();
 
-		new PlaySearchCommandMenu().execute();
+		playCommandsMenu("name.wav");
 	}
 
 	public static HashMap<String, String> names;
@@ -150,7 +150,7 @@ public class SearchContactActivity extends Activity implements
 			long nmsec = end_date.getTime() - names_start_date.getTime();
 			names_speech_dur = (float) nmsec / 1000;
 			if (names_listening) {
-				Log.d(getClass().getName(), "Showing Dialog");				
+				Log.d(getClass().getName(), "Showing Dialog");
 				names_listening = false;
 				flagSpeak = false;
 			}
@@ -186,7 +186,6 @@ public class SearchContactActivity extends Activity implements
 					if (results.length > 0)
 						searchRecognizerControl(true);
 				}
-
 			}
 		});
 
@@ -277,6 +276,7 @@ public class SearchContactActivity extends Activity implements
 				searchRecognizerControl(false);
 			} else {
 				try {
+					playBeep();
 					Intent callIntent = new Intent(Intent.ACTION_CALL);
 					callIntent.setData(Uri.parse("tel:" + phoneNumber));
 					startActivity(callIntent);
@@ -291,15 +291,18 @@ public class SearchContactActivity extends Activity implements
 		}
 	}
 
-	public void playCommandsMenu() {
+	public void playCommandsMenu(String fileName) {
 		player = new MediaPlayer();
+		player.setOnCompletionListener(new OnCompletionListener() {
+
+			public void onCompletion(MediaPlayer mp) {
+				searchRecognizerControl(false);
+			}
+		});
 
 		try {
 			player.setDataSource(Environment.getExternalStorageDirectory()
-					.getPath()
-					+ "/"
-					+ StartMenu.APP_NAME
-					+ "/wav/save-contact.wav");
+					.getPath() + "/" + StartMenu.APP_NAME + "/wav/" + fileName);
 			player.prepare();
 		} catch (IllegalStateException e) {
 			// TODO Auto-generated catch block
@@ -312,27 +315,22 @@ public class SearchContactActivity extends Activity implements
 		player.setLooping(false);
 	}
 
-	private class PlaySearchCommandMenu extends AsyncTask<URL, Integer, String> {
+	public void playBeep() {
+		playerBeep = new MediaPlayer();
 
-		@Override
-		protected String doInBackground(URL... params) {
-
-			try {
-				playCommandsMenu();
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			return null;
+		try {
+			playerBeep.setDataSource(Environment.getExternalStorageDirectory()
+					.getPath() + "/" + StartMenu.APP_NAME + "/wav/beep.wav");
+			playerBeep.prepare();
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			searchRecognizerControl(false);
-		}
-
+		playerBeep.start();
+		playerBeep.setLooping(false);
 	}
 
 }

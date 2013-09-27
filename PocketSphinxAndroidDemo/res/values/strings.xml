@@ -16,5 +16,10 @@
     <string name="call_label">Телефонски број:</string>    
     <string name="contact_name">Име на контакт:</string>
     <string name="search_label">Пребарај контакт</string>
+    <string name="menu_label">Говорно мени</string>
+    <string name="nula">0</string>
+    <string name="eden">1</string>
+    <string name="dva">2</string>
+    <string name="tri">3</string>
 
 </resources>

@@ -6,70 +6,91 @@
     <Button
         android:id="@+id/BtnPhone"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"             
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-        android:text="0" />
+        android:layout_marginTop="40dp"
+        android:text="@string/nula" />
+
     <TextView
         android:id="@+id/PhoneLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/BtnPhone"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="20dp"
         android:text="@string/phone_label" >
     </TextView>
-    
+
     <Button
         android:id="@+id/BtnSaveContact"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        android:layout_below="@id/PhoneLabel"            
+        android:layout_height="wrap_content"
+        android:layout_below="@id/PhoneLabel"
         android:layout_centerHorizontal="true"
-        android:text="1" />
+        android:text="@string/eden" />
+
     <TextView
         android:id="@+id/SaveContactLabel"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"        
+        android:layout_height="wrap_content"
         android:layout_below="@id/BtnSaveContact"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="20dp"
         android:text="@string/save_contact_label" >
     </TextView>
-    
+
     <Button
         android:id="@+id/BtnSearch"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        android:layout_below="@id/SaveContactLabel"            
+        android:layout_height="wrap_content"
+        android:layout_below="@id/SaveContactLabel"
         android:layout_centerHorizontal="true"
-        android:text="2" />
+        android:text="@string/dva" />
+
     <TextView
         android:id="@+id/SearchLabel"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"        
+        android:layout_height="wrap_content"
         android:layout_below="@id/BtnSearch"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
         android:text="@string/search_label" >
-    </TextView>       
-    
+    </TextView>
+
+    <Button
+        android:id="@+id/BtnMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/SearchLabel"
+        android:layout_centerHorizontal="true"
+        android:text="@string/tri" />
+
+    <TextView
+        android:id="@+id/MenuLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/BtnMenu"
+        android:layout_centerHorizontal="true"
+        android:text="@string/menu_label" >
+    </TextView>
+
     <EditText
         android:id="@+id/StartMenuEdit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/SearchLabel"
+        android:layout_below="@id/MenuLabel"
         android:gravity="bottom|center_horizontal"
-        android:height="100dp"
+        android:height="80dp"
         android:inputType="none"
         android:text="@string/results_here"
         android:textSize="20sp" />
-    
+
     <TextView
         android:id="@+id/PerformanceLabel"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"        
+        android:layout_height="wrap_content"
         android:layout_below="@id/StartMenuEdit"
-        android:layout_centerHorizontal="true"        
+        android:layout_centerHorizontal="true"
         android:text="@string/performance_text" />
 
 </RelativeLayout>

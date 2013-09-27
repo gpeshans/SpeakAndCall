@@ -1,7 +1,6 @@
 package mk.ukim.finki.peda.speakandcall.app;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -12,17 +11,22 @@ import mk.ukim.finki.peda.speakandcall.RecognizerTask;
 import mk.ukim.finki.peda.speakandcall.RecognizerTaskNames;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.os.AsyncTask;
+import android.media.MediaPlayer.OnCompletionListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Contacts.People;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+@SuppressWarnings("deprecation")
 public class SaveContactActivity extends Activity implements
 		RecognitionListenerNames, RecognitionListener {
 	static {
@@ -85,7 +89,9 @@ public class SaveContactActivity extends Activity implements
 	 */
 	TextView performance_text;
 
-	MediaPlayer player;
+	MediaPlayer digitsPlayer;
+	MediaPlayer namesPlayer;
+	MediaPlayer beepPlayer;
 
 	String telephoneNumber = "";
 
@@ -117,58 +123,14 @@ public class SaveContactActivity extends Activity implements
 		this.names_rec_thread = new Thread(this.names_rec);
 		this.names_rec_thread.start();
 
-		new PlayNumberCommandMenu().execute();
+		playDigitsMenu("phone-number.wav");
 	}
 
 	protected void onStop() {
 		super.onStop();
 		digitsRecognizerControl(true);
 		namesRecognizerControl(true);
-		player.stop();
-	}
-
-	private class PlayNumberCommandMenu extends AsyncTask<URL, Integer, String> {
-
-		@Override
-		protected String doInBackground(URL... params) {
-
-			try {
-				playCommandsMenu("telefoniranje.wav");
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			digitsRecognizerControl(false);
-		}
-
-	}
-
-	private class PlayNameCommandMenu extends AsyncTask<URL, Integer, String> {
-
-		@Override
-		protected String doInBackground(URL... params) {
-
-			try {
-				playCommandsMenu("telefoniranje.wav");
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			namesRecognizerControl(false);
-		}
-
+		digitsPlayer.stop();
 	}
 
 	public static void fillDigits() {
@@ -213,13 +175,22 @@ public class SaveContactActivity extends Activity implements
 		names.put("ZORAN", "ЗОРАН");
 	}
 
-	public void playCommandsMenu(String wavFile) {
-		player = new MediaPlayer();
+	public void playDigitsMenu(String wavFile) {
+		digitsPlayer = new MediaPlayer();
+		digitsPlayer.setOnCompletionListener(new OnCompletionListener() {
+
+			public void onCompletion(MediaPlayer mp) {
+				digitsRecognizerControl(false);
+			}
+		});
 
 		try {
-			player.setDataSource(Environment.getExternalStorageDirectory()
-					.getPath() + "/" + APP_NAME + "/wav/" + wavFile);
-			player.prepare();
+			digitsPlayer.setDataSource(Environment
+					.getExternalStorageDirectory().getPath()
+					+ "/"
+					+ APP_NAME
+					+ "/wav/" + wavFile);
+			digitsPlayer.prepare();
 		} catch (IllegalStateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -227,8 +198,50 @@ public class SaveContactActivity extends Activity implements
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		player.start();
-		player.setLooping(false);
+		digitsPlayer.start();
+		digitsPlayer.setLooping(false);
+	}
+
+	public void playNamesMenu(String wavFile) {
+		namesPlayer = new MediaPlayer();
+		namesPlayer.setOnCompletionListener(new OnCompletionListener() {
+
+			public void onCompletion(MediaPlayer mp) {
+				namesRecognizerControl(false);
+			}
+		});
+
+		try {
+			namesPlayer.setDataSource(Environment.getExternalStorageDirectory()
+					.getPath() + "/" + APP_NAME + "/wav/" + wavFile);
+			namesPlayer.prepare();
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		namesPlayer.start();
+		namesPlayer.setLooping(false);
+	}
+
+	public void playBeep(String wavFile) {
+		beepPlayer = new MediaPlayer();
+
+		try {
+			beepPlayer.setDataSource(Environment.getExternalStorageDirectory()
+					.getPath() + "/" + APP_NAME + "/wav/" + wavFile);
+			beepPlayer.prepare();
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		beepPlayer.start();
+		digitsPlayer.setLooping(false);
 	}
 
 	public void digitsRecognizerControl(boolean flagSpeak) {
@@ -276,13 +289,13 @@ public class SaveContactActivity extends Activity implements
 				flagSpeak = false;
 			}
 			names_rec.stop();
-
 		}
 	}
 
 	public void savePhoneNumber(String number) {
 		telephoneNumber = number;
-		new PlayNameCommandMenu().execute();		
+		playBeep("beep.wav");
+		playNamesMenu("name.wav");
 	}
 
 	public void saveContact(String cName, String cNumber) {
@@ -299,6 +312,27 @@ public class SaveContactActivity extends Activity implements
 		} catch (Exception ex) {
 			Log.e(APP_NAME + ":", "Insert contact error!");
 		}
+	}
+
+	private void addContact(String name, String phone) {
+		try {
+			ContentValues values = new ContentValues();
+			values.put(People.NUMBER, phone);
+			values.put(People.TYPE, Phone.TYPE_CUSTOM);
+			values.put(People.LABEL, name);
+			values.put(People.NAME, name);
+			Uri dataUri = getContentResolver().insert(People.CONTENT_URI,
+					values);
+			Uri updateUri = Uri.withAppendedPath(dataUri,
+					People.Phones.CONTENT_DIRECTORY);
+			values.clear();
+			values.put(People.Phones.TYPE, People.TYPE_MOBILE);
+			values.put(People.NUMBER, phone);
+			updateUri = getContentResolver().insert(updateUri, values);
+		} catch (Exception ex) {
+			Log.e(APP_NAME + ":", "Insert contact error!");
+		}
+		playBeep("beep.wav");
 	}
 
 	public void checkName(String name) {
@@ -464,7 +498,7 @@ public class SaveContactActivity extends Activity implements
 						that.names_rec_dialog.dismiss();
 
 					String contactName = hyp.split(" ")[hyp.split(" ").length - 1];
-					saveContact(contactName, telephoneNumber);
+					addContact(contactName, telephoneNumber);
 
 				}
 			});

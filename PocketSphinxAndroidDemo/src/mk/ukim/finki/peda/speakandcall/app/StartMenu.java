@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -17,7 +16,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.media.MediaPlayer;
-import android.os.AsyncTask;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -121,7 +120,8 @@ public class StartMenu extends Activity implements RecognitionListener {
 
 		this.rec_thread.start();
 
-		new PlayCommandMenu().execute();
+		playCommandsMenu("menu.wav");
+
 	}
 
 	@Override
@@ -135,7 +135,7 @@ public class StartMenu extends Activity implements RecognitionListener {
 		// TODO Auto-generated method stub
 		super.onResume();
 		if (resumeFlag) {
-
+			this.rec = null;
 			if (digits.isEmpty())
 				fillDigits();
 
@@ -156,19 +156,25 @@ public class StartMenu extends Activity implements RecognitionListener {
 			this.rec_thread = new Thread(this.rec);
 
 			this.rec_thread.start();
-			
+
 			resumeFlag = false;
 
-			new PlayCommandMenu().execute();
+			playCommandsMenu("choose-option.wav");
 		}
 	}
 
-	public void playCommandsMenu() {
+	public void playCommandsMenu(String fileName) {
 		player = new MediaPlayer();
+		player.setOnCompletionListener(new OnCompletionListener() {
+
+			public void onCompletion(MediaPlayer mp) {
+				RecognizerControl(false);
+			}
+		});
 
 		try {
 			player.setDataSource(Environment.getExternalStorageDirectory()
-					.getPath() + "/" + APP_NAME + "/wav/save-contact.wav");
+					.getPath() + "/" + APP_NAME + "/wav/" + fileName);
 			player.prepare();
 		} catch (IllegalStateException e) {
 			// TODO Auto-generated catch block
@@ -209,8 +215,12 @@ public class StartMenu extends Activity implements RecognitionListener {
 				"mdef", "means", "mixture_weights", "noisedict",
 				"transition_matrices", "variances" };
 
-		String[] wavFiles = { "save-contact.wav", "search-contacts.wav",
-				"telefoniranje.wav" };
+		String[] wavFiles = { "cell-phone-1-nr0.wav", "cell-phone-1-nr1.wav",
+				"cell-phone-1-nr2.wav", "cell-phone-1-nr3.wav",
+				"cell-phone-1-nr4.wav", "cell-phone-1-nr5.wav",
+				"cell-phone-1-nr6.wav", "cell-phone-1-nr7.wav",
+				"cell-phone-1-nr8.wav", "cell-phone-1-nr9.wav", "menu.wav",
+				"phone-number.wav", "name.wav", "choose-option.wav", "beep.wav", "ringing.wav" };
 
 		for (int i = 2; i < 9; i++) {
 			String filenameDigits = "";
@@ -296,44 +306,28 @@ public class StartMenu extends Activity implements RecognitionListener {
 			}
 		}
 
-		for (int i = 0; i < 3; i++) {
-			String filenameDigits = "";
-			InputStream inDigits = null;
-			OutputStream outDigits = null;
-
-			String filenameNames = "";
-			InputStream inNames = null;
-			OutputStream outNames = null;
+		for (int i = 0; i < 16; i++) {
+			String filenameWav = "";
+			InputStream inWav = null;
+			OutputStream outWav = null;
 
 			try {
-				filenameDigits = wavFiles[i];
-				inDigits = assetManager.open(filenameDigits);
-				outDigits = new FileOutputStream(Environment
+				filenameWav = wavFiles[i];
+				inWav = assetManager.open(filenameWav);
+				outWav = new FileOutputStream(Environment
 						.getExternalStorageDirectory().getPath()
 						+ "/"
-						+ APP_NAME + "/wav/" + filenameDigits);
-				copyFile(inDigits, outDigits);
-				inDigits.close();
-				inDigits = null;
-				outDigits.flush();
-				outDigits.close();
-				outDigits = null;
+						+ APP_NAME + "/wav/" + filenameWav);
+				copyFile(inWav, outWav);
+				inWav.close();
+				inWav = null;
+				outWav.flush();
+				outWav.close();
+				outWav = null;
 
-				filenameNames = namesFiles[i];
-				inNames = assetManager.open(filenameNames);
-				outNames = new FileOutputStream(Environment
-						.getExternalStorageDirectory().getPath()
-						+ "/"
-						+ APP_NAME + "/" + filenameNames);
-				copyFile(inNames, outNames);
-				inNames.close();
-				inNames = null;
-				outNames.flush();
-				outNames.close();
-				outNames = null;
 			} catch (IOException e) {
-				Log.e("tag", "Failed to copy asset file: " + filenameDigits
-						+ " or " + filenameNames, e);
+				Log.e("tag", "Failed to copy asset file: " + filenameWav
+						+ " or " + filenameWav, e);
 			}
 		}
 	}
@@ -495,10 +489,10 @@ public class StartMenu extends Activity implements RecognitionListener {
 					if (results.length > 0)
 						if (results[results.length - 1] == "0"
 								|| results[results.length - 1] == "1"
-								|| results[results.length - 1] == "2")
+								|| results[results.length - 1] == "2"
+								|| results[results.length - 1] == "3")
 							RecognizerControl(true);
 				}
-
 			}
 		});
 
@@ -557,6 +551,9 @@ public class StartMenu extends Activity implements RecognitionListener {
 			Intent intent = new Intent(this, SearchContactActivity.class);
 			resumeFlag = true;
 			startActivity(intent);
+		} else if (number == "3") {
+			// choose option
+			playCommandsMenu("menu.wav");
 		} else {
 			RecognizerControl(false);
 		}
@@ -570,29 +567,6 @@ public class StartMenu extends Activity implements RecognitionListener {
 				that.rec_dialog.dismiss();
 			}
 		});
-
-	}
-
-	private class PlayCommandMenu extends AsyncTask<URL, Integer, String> {
-
-		@Override
-		protected String doInBackground(URL... params) {
-
-			try {
-				playCommandsMenu();
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			RecognizerControl(false);
-		}
 
 	}
 

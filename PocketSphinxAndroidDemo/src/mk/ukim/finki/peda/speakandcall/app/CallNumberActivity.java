@@ -1,7 +1,6 @@
 package mk.ukim.finki.peda.speakandcall.app;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -13,8 +12,8 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -72,8 +71,10 @@ public class CallNumberActivity extends Activity implements RecognitionListener 
 	Boolean flagSpeak;
 
 	MediaPlayer player;
+	MediaPlayer playerDigit;
 
 	public static HashMap<String, String> digits;
+	public static HashMap<String, String> digitSounds;
 
 	/**
 	 * Respond to touch events on the Speak button.
@@ -94,6 +95,7 @@ public class CallNumberActivity extends Activity implements RecognitionListener 
 		setContentView(R.layout.call_layout);
 
 		fillDigits();
+		fillDigitSounds();
 
 		this.start_date = new Date();
 
@@ -113,7 +115,7 @@ public class CallNumberActivity extends Activity implements RecognitionListener 
 
 		this.rec_thread.start();
 
-		new PlayCommandMenu().execute();
+		playCommandsMenu("phone-number.wav");
 	}
 
 	protected void onStop() {
@@ -122,13 +124,35 @@ public class CallNumberActivity extends Activity implements RecognitionListener 
 		player.stop();
 	}
 
-	public void playCommandsMenu() {
+	public void playCommandsMenu(String fileName) {
 		player = new MediaPlayer();
+		player.setOnCompletionListener(new OnCompletionListener() {
+
+			public void onCompletion(MediaPlayer mp) {
+				RecognizerControl(false);
+			}
+		});
 
 		try {
 			player.setDataSource(Environment.getExternalStorageDirectory()
-					.getPath() + "/" + APP_NAME + "/wav/save-contact.wav");
+					.getPath() + "/" + APP_NAME + "/wav/" + fileName);
 			player.prepare();
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		player.start();
+		player.setLooping(false);
+	}
+
+	public void playDigitBeep(String fileName) {
+		playerDigit = new MediaPlayer();
+
+		try {
+			playerDigit.setDataSource(Environment.getExternalStorageDirectory()
+					.getPath() + "/" + APP_NAME + "/wav/" + fileName);
+			playerDigit.prepare();
 		} catch (IllegalStateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -136,8 +160,8 @@ public class CallNumberActivity extends Activity implements RecognitionListener 
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		player.start();
-		player.setLooping(false);
+		playerDigit.start();
+		playerDigit.setLooping(false);
 	}
 
 	public void RecognizerControl(boolean flagSpeak) {
@@ -157,10 +181,7 @@ public class CallNumberActivity extends Activity implements RecognitionListener 
 			speech_dur = (float) nmsec / 1000;
 			if (listening) {
 				Log.d(getClass().getName(), "Showing Dialog");
-				/*
-				 * rec_dialog = ProgressDialog.show(getParent(), "",
-				 * "Процесира...", true); rec_dialog.setCancelable(false);
-				 */
+
 				listening = false;
 				flagSpeak = false;
 			}
@@ -183,6 +204,22 @@ public class CallNumberActivity extends Activity implements RecognitionListener 
 		digits.put("SEDUM", "7");
 		digits.put("OSUM", "8");
 		digits.put("DEVET", "9");
+	}
+
+	public static void fillDigitSounds() {
+
+		digitSounds = new HashMap<String, String>();
+
+		digits.put("0", "cell-phone-1-nr0.wav");
+		digits.put("1", "cell-phone-1-nr1.wav");
+		digits.put("2", "cell-phone-1-nr2.wav");
+		digits.put("3", "cell-phone-1-nr3.wav");
+		digits.put("4", "cell-phone-1-nr4.wav");
+		digits.put("5", "cell-phone-1-nr5.wav");
+		digits.put("6", "cell-phone-1-nr6.wav");
+		digits.put("7", "cell-phone-1-nr7.wav");
+		digits.put("8", "cell-phone-1-nr8.wav");
+		digits.put("9", "cell-phone-1-nr9.wav");
 	}
 
 	@Override
@@ -208,9 +245,14 @@ public class CallNumberActivity extends Activity implements RecognitionListener 
 							finalRes += results[i];
 					}
 
+					//String fileName = results[results.length - 1];
+
 					that.edit_text.setText(finalRes);
-					if (results.length >= 9)
+					// playDigitBeep("beep.wav");
+
+					if (results.length >= 9) {
 						RecognizerControl(true);
+					}
 				}
 			}
 		});
@@ -272,10 +314,13 @@ public class CallNumberActivity extends Activity implements RecognitionListener 
 
 			String speechResult = telNumber.replace(" ", "");
 
+			playDigitBeep("been.wav");
+
 			Toast.makeText(getBaseContext(), speechResult, Toast.LENGTH_LONG)
 					.show();
 
 			try {
+
 				Intent callIntent = new Intent(Intent.ACTION_CALL);
 				callIntent.setData(Uri.parse("tel:" + speechResult));
 				startActivity(callIntent);
@@ -296,29 +341,6 @@ public class CallNumberActivity extends Activity implements RecognitionListener 
 
 			}
 		});
-
-	}
-
-	private class PlayCommandMenu extends AsyncTask<URL, Integer, String> {
-
-		@Override
-		protected String doInBackground(URL... params) {
-
-			try {
-				playCommandsMenu();
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			RecognizerControl(false);
-		}
 
 	}
 
